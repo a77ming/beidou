@@ -1,5 +1,4 @@
-"use client"
-import { useParams } from "next/navigation"
+import { notFound } from "next/navigation"
 
 const dramaDetails = {
   "1": {
@@ -21,10 +20,20 @@ const dramaDetails = {
   // ... 其他静态数据 ...
 }
 
-export default function SpaceDetailPage() {
-  const params = useParams()
-  const id = params?.id as string
-  const detail = dramaDetails[id] || { title: "未找到", chat: [], video: null }
+// 生成静态参数，用于静态导出
+export async function generateStaticParams() {
+  return Object.keys(dramaDetails).map((id) => ({
+    id: id,
+  }))
+}
+
+export default function SpaceDetailPage({ params }: { params: { id: string } }) {
+  const id = params.id
+  const detail = dramaDetails[id]
+  
+  if (!detail) {
+    notFound()
+  }
 
   return (
     <div className="p-8">
